@@ -1,10 +1,10 @@
-const User = require('/models/auth/user.model');
+const User = require('../../../models/auth/user.model');
 const {
   generateOTP,
   sendOTPEmail,
   hashPassword,
   generateToken
-} = require('/service/forgotAndResetServices');
+} = require('../../../service/forgotAndResetServices');
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;

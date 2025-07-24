@@ -12,13 +12,13 @@ const sendOTPEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 
   const mailOptions = {
-    from: `"APP_NAME" <${process.env.EMAIL_USER}>`,
+    from: `"APP_NAME" <${process.env.EMAIL_USERNAME}>`,
     to: email,
     subject: 'Password Reset OTP',
     html: `
@@ -38,7 +38,7 @@ const hashPassword = async (password) => {
 };
 
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '2h' });
+  return jwt.sign({ id: userId }, process.env.SECRET_KEY, { expiresIn: '2h' });
 };
 
 module.exports = {
