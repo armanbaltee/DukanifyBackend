@@ -15,14 +15,14 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'Email not registered' });
     }
 
-    const otp = generateOTP();
-    user.resetOtp = otp;
+    const otp = generateLoginOTP();
+    user.otp = otp;
     user.otpExpires = Date.now() + 2 * 60 * 1000;
     await user.save();
 
     try {
       await sendOTPEmail(email, otp);
-      return res.status(200).json({ message: 'OTP sent to your email' });
+      return res.status(200).json({ message: 'OTP sent to your email', token : user.otp, userId : user._id });
     } catch (err) {
       return res.status(500).json({ message: 'Failed to send OTP' });
     }
@@ -33,13 +33,14 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  const { email, newPassword } = req.body;
+  const { id, newPassword } = req.body;
 
   try {
     const hashed = await hashPassword(newPassword);
-    await User.findOneAndUpdate({ email }, { password: hashed });
-
-    const user = await User.findOne({ email });
+    await User.findOneAndUpdate({ id }, { password: hashed });
+    
+    const user = await User.findOne({ _id: id });
+    console.log("hased--->", id)
     const token = generateToken(user._id);
 
     return res.status(200).json({
@@ -50,4 +51,9 @@ exports.resetPassword = async (req, res) => {
   } catch (err) {
     return res.status(400).json({ message: 'Invalid or expired' });
   }
+};
+
+
+const generateLoginOTP = () => {
+  return Math.floor(1000 + Math.random() * 9000).toString();
 };

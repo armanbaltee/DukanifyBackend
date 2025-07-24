@@ -1,12 +1,14 @@
 const User = require('../../../models/auth/user.model');
+const nodemailer = require("nodemailer")
+require('dotenv').config()
 
 exports.verifyOTP = async (req, res, next) => {
   try {
-    const { userId, otp } = req.body;
+    const { id, otp } = req.body;
 
     console.log('verify OTP=====', req.body)
 
-    const user = await User.findById(userId);
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -46,7 +48,7 @@ exports.resendOTP = async (req, res, next) => {
     await user.save();
     await sendOTPEmail(user.email, otp)
 
-    res.json({ message: 'New OTP sent to your email' });
+    res.json({ message: 'New OTP sent to your email',token: user.otp });
   } catch (error) {
     console.log('error in otp resend', error)
     res.send({ message : 'error in resend otp' })
@@ -64,8 +66,8 @@ const sendOTPEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 

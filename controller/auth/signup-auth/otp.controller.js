@@ -1,11 +1,13 @@
 const User = require('../../../models/auth/user.model');
 const jwt = require('jsonwebtoken');
+const service = require('../../../service/userService')
 require('dotenv').config()
 
 
 exports.verifyOTP = async (req, res, next) => {
   try {
     const { userId, otp } = req.body;
+    console.log('userId--->', userId)
     const user = await User.findById(userId);
 
     if (!user) {
@@ -29,7 +31,8 @@ exports.verifyOTP = async (req, res, next) => {
 
     res.json({ message: 'Account verified successfully',token });
   } catch (error) {
-    next(error);
+    console.log('error:', error.message)
+    res.status(500).json({message: "Error: ", err: error.message})
   }
 };
 
@@ -42,15 +45,17 @@ exports.resendOTP = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const otp = generateOTP();
+    const otp = service.generateOTP();
     user.otp = otp;
     user.otpExpires = new Date(Date.now() + 15 * 60 * 1000);
     await user.save();
-    await sendOTP(user.email, otp);
+    await service.sendOTP(user.email, otp);
 
     res.json({ message: 'New OTP sent to your email' });
   } catch (error) {
-    next(error);
+    console.log('error:', error.message)
+    res.status(500).json({message: "Error: ", err: error.message})
+    // next(error);
   }
 };
 

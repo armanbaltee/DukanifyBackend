@@ -22,7 +22,7 @@ router.post('/google', googleAuth.googleLogin)
 router.post('/forgot-password', loginController.forgotPassword);
 router.post('/reset-password', loginController.resetPassword);
 router.post('/login', loginAuthMiddleware.login, loginAuthController.login);
-router.post('/verifyOTP', verifyLoginOtp.verifyOTP);
-router.post('/resendOTP', verifyLoginOtp.resendOTP)
+router.post('/verifyloginOTP', verifyLoginOtp.verifyOTP);
+router.post('/resendloginOTP', verifyLoginOtp.resendOTP)
 
 module.exports =router
