@@ -4,7 +4,7 @@ const {
   sendOTPEmail,
   hashPassword,
   generateToken
-} = require('../services/authService');
+} = require('/service/forgotAndResetServices');
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
