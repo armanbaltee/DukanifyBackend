@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv').config();
 const session = require('express-session');
+const route = require('./routes/auth/auth.routes')
 
 const app = express();
 app.use(cors({
@@ -16,6 +17,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: false }
 }));
+app.use('/api/auth', route)
+// app.use('/users', route);
 
 const PORT = process.env.PORT || 3000;
 

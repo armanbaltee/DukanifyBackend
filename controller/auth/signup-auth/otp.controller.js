@@ -1,7 +1,7 @@
-const User = require('../models/User');
+const User = require('../../../models/auth/user.model');
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
 
-const SECRET_KEY = 'your_secret_key';
 
 exports.verifyOTP = async (req, res, next) => {
   try {
@@ -23,7 +23,7 @@ exports.verifyOTP = async (req, res, next) => {
 
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role }, 
-      SECRET_KEY,
+      process.env.SECRET_KEY,
       { expiresIn: '1h' }
     );
 
