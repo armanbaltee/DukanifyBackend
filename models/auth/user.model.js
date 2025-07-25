@@ -1,9 +1,12 @@
-  const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+
 const userSchema = new mongoose.Schema({
- 
   name: {
-    type: String
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 3
   },
   email: {
     type: String,
@@ -12,15 +15,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
-
-  
   googleId: {
     type: String,
     unique: true,
-    sparse: true   
+    sparse: true
   },
-
-  // For Email/Password Login
   password: {
     type: String
   },
@@ -34,17 +33,20 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-
-  // Optional photo field (for Google or profile image)
   photo: {
     type: String
   },
-
+    role: {
+    type: String,
+    enum: ['buyer', 'seller', 'both'],
+    default: 'buyer'
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
-}); 
+});
+
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
@@ -55,6 +57,5 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.comparePassword = function (inputPassword) {
   return bcrypt.compare(inputPassword, this.password);
 };
-
 
 module.exports = mongoose.model('User', userSchema);
