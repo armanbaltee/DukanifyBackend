@@ -1,9 +1,9 @@
 const User = require("../../../models/auth/user.model");
 const { generateOTP, sendOTP } = require("../../../service/userService");
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -12,10 +12,11 @@ const signup = async (req, res) => {
 
     const otp = generateOTP();
     const user = new User({
+      name,
       email,
       password,
       otp,
-      otpExpires: new Date(Date.now() + 15 * 60 * 1000),
+      otpExpires: new Date(Date.now() + 15 * 60 * 1000)
     });
 
     await user.save();
@@ -23,7 +24,7 @@ const signup = async (req, res) => {
 
     res.status(201).json({
       message: "OTP sent to your email",
-      userId: user._id,
+      userId: user._id
     });
   } catch (error) {
     next(error);
@@ -36,5 +37,5 @@ const protectedRoute = (req, res) => {
 
 module.exports = {
   signup,
-  protectedRoute,
+  protectedRoute
 };
