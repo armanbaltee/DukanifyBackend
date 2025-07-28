@@ -1,10 +1,13 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const dotenv = require("dotenv").config();
-const session = require("express-session");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const dotenv = require('dotenv').config();
+const session = require('express-session');
+const route = require('./routes/auth/auth.routes')
+const adminRoutes = require('./routes/admin/admin.routes')
 
-const contactRoutes = require("./routes/auth/contact.routes");
+const contactRoutes = require('./routes/auth/contact.routes'); 
+
 
 const app = express();
 app.use(
@@ -14,16 +17,15 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false },
-  })
-);
-
-app.use("/api/contact", contactRoutes);
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}));
+app.use('/api/auth', route)
+app.use('/api/admin', adminRoutes);
+app.use('/api', contactRoutes);
 
 const PORT = process.env.PORT || 3000;
 
