@@ -11,7 +11,7 @@ const loginController = require("../../controller/auth/login-auth/forgotAndReset
 const loginAuthController = require("../../controller/auth/login-auth/user.controller")
 const loginAuthMiddleware = require("../../middleware/auth/login-auth-middleware/user.middleware")
 const verifyLoginOtp = require("../../controller/auth/login-auth/verifyLoginOTP.controller")
-const userController = require("../../controller/myprofile/profile.controller");
+
 
 router.post('/signup', signupMiddleware.signupMiddleware ,signupController.signup)
 router.post('/verifyotp', otpCotroller.verifyOTP);
@@ -26,6 +26,6 @@ router.post('/login', loginAuthMiddleware.login, loginAuthController.login);
 router.post('/verifyloginOTP', verifyLoginOtp.verifyOTP);
 router.post('/resendloginOTP', verifyLoginOtp.resendOTP)
 
-router.get('/:id', userController.getUserById);
+
 
 module.exports =router
