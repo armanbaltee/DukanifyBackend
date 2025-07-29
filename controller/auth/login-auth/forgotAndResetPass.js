@@ -9,23 +9,29 @@ const {
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
 
+  console.log('email in forget password====', req.body)
+
   try {
     const user = await User.findOne({ email });
+
+    console.log('user found in forget==', user)
     if (!user) {
       return res.status(404).json({ message: 'Email not registered' });
     }
 
     const otp = generateLoginOTP();
     user.otp = otp;
+
+    console.log('otp', user.otp)
     user.otpExpires = Date.now() + 2 * 60 * 1000;
     await user.save();
 
-    try {
-      await sendOTPEmail(email, otp);
-      return res.status(200).json({ message: 'OTP sent to your email', token : user.otp, userId : user._id });
-    } catch (err) {
-      return res.status(500).json({ message: 'Failed to send OTP' });
-    }
+    console.log('user--------------', user)
+
+    
+    await sendOTPEmail(email, otp);
+    return res.status(200).json({ message: 'OTP sent to your email', token : user.otp, userId : user._id });
+    
 
   } catch (error) {
     return res.status(500).json({ message: 'Server error' });

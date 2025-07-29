@@ -6,7 +6,7 @@ const storeSchema = new mongoose.Schema({
   storeName: { type: String, required: true },
   storeAddress: { type: String, required: true },
 
-  storeLogo: { type: String, required: true },
+  storeLogo: { type: String },
   storeBanner: [{ type: String }],
   storePictures: [{ type: String }],
   storeCertifications: [{ type: String }],
@@ -29,7 +29,6 @@ const storeSchema = new mongoose.Schema({
   category: [{
     type: String,
     enum: ['Electronics', 'Fashion', 'Groceries', 'Home Appliances', 'Health & Beauty'],
-    required: true
   }],
 
   isStoreVerified: { type: Boolean, default: false },
