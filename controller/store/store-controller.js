@@ -46,7 +46,6 @@ exports.createStore = async (req, res) => {
         storeDescription,
         openingTime,
         closingTime,
-        category,
         storePaymentMethods,
       } = req.body;
 
@@ -62,13 +61,14 @@ exports.createStore = async (req, res) => {
           openingTime,
           closingTime,
         },
-        category: JSON.parse(category),
         storePaymentMethods: JSON.parse(storePaymentMethods),
 
         storeLogo: req.files['storeLogo']?.[0]?.path || '',
         storeBanner: req.files['storeBanner']?.map(file => file.path) || [],
         storePictures: req.files['storePictures']?.map(file => file.path) || [],
       });
+
+      console.log('new store=====', newStore)
 
       await newStore.save();
       res.status(201).json({ message: 'Store created', store: newStore });
@@ -83,13 +83,33 @@ exports.createStore = async (req, res) => {
     const userId = req.params.id
     console.log('userid==========', userId)
     try{
-      const store = await Store.findOne({ userId })
+      const stores = await Store.find({ userId })
 
-      if(!store){
+      if(!stores){
         return res.status(400).send({ message : 'Store Not Found!' })
       }
 
+      res.status(200).send(stores)
+    }catch(error){
+      console.log('Error in finding store', error)
+      res.status(400).send({ message : 'Store finding Error!!' })
+    }
+  }
+
+  exports.getStoreById = async (req, res) => {
+    const storeId = req.params.id
+
+    console.log('storeid===========', storeId)
+
+    try{
+      const store = await Store.findById(storeId)
+
+      if(!store){
+        return res.status(400).send({ message : 'Store not found' })
+      }
+      
       res.status(200).send(store)
+
     }catch(error){
       console.log('Error in finding store', error)
       res.status(400).send({ message : 'Store finding Error!!' })
