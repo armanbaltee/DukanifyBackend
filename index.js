@@ -6,6 +6,8 @@ const session = require('express-session');
 const route = require('./routes/auth/auth.routes')
 const adminRoutes = require('./routes/admin/admin.routes')
 const storeRoutes = require('./routes/store/store.routes')
+const productCategory = require('./routes/product/category.routes')
+const productRoutes = require("./routes/product/product.routes")
 const profileRoutes = require('./routes/profile/profile.routes')
 
 const app = express();
@@ -23,6 +25,9 @@ app.use(session({
 app.use('/api/auth', route)
 app.use('/api/admin', adminRoutes);
 app.use('/api/store', storeRoutes)
+
+app.use('/product/category', productCategory);
+app.use('/product', productRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/uploads', express.static('uploads'));
 // app.use('/users', route);
