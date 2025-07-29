@@ -12,6 +12,7 @@ const loginAuthController = require("../../controller/auth/login-auth/user.contr
 const loginAuthMiddleware = require("../../middleware/auth/login-auth-middleware/user.middleware")
 const verifyLoginOtp = require("../../controller/auth/login-auth/verifyLoginOTP.controller")
 
+
 router.post('/signup', signupMiddleware.signupMiddleware ,signupController.signup)
 router.post('/verifyotp', otpCotroller.verifyOTP);
 router.post('/resendotp', otpCotroller.resendOTP);
@@ -24,5 +25,7 @@ router.post('/reset-password', loginController.resetPassword);
 router.post('/login', loginAuthMiddleware.login, loginAuthController.login);
 router.post('/verifyloginOTP', verifyLoginOtp.verifyOTP);
 router.post('/resendloginOTP', verifyLoginOtp.resendOTP)
+
+
 
 module.exports =router
