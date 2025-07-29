@@ -1,7 +1,7 @@
 const User = require("../../../models/auth/user.model");
 const { generateOTP, sendOTP } = require("../../../service/userService");
 
-const signup = async (req, res, next) => {
+const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -27,7 +27,11 @@ const signup = async (req, res, next) => {
       userId: user._id
     });
   } catch (error) {
-    next(error);
+    // next(error);
+     res.json({
+      message: `failed to sign up ${error}`
+      // userId: user._id
+    });
   }
 };
 
