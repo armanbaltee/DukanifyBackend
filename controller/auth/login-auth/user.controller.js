@@ -9,13 +9,18 @@ const bcrypt = require("bcrypt");
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    console.log('user login =====', req.body)
     const user = await User.findOne({ email });
+    console.log('stored user======', user)
     if (!user) {
       console.log("No user found");
       return res.status(400).send({ message: "User not found" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
+    console.log('ismatch====', isMatch)
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid Credentials" });
     }
@@ -23,6 +28,8 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
       expiresIn: "2h",
     });
+
+    console.log('token====', token)
 
     res.status(200).json({
       message: "Login Successfll",
