@@ -16,6 +16,8 @@ router.post('/registerStore', upload.fields([
 
 router.get('/getStore/:id', storeController.getStore)
 
+router.get('/getStoreById/:id', storeController.getStoreById)
+
 
 
 module.exports = router;
