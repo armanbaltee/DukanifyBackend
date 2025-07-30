@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { validateContact } = require("../../controller/auth/contact.controller");
+const validateContact = require("../../controller/auth/contact.controller");
 const validateMiddleware = require("../../middleware/contact.middleware");
 
-router.post("/contactUs", validateContact);
+router.post("/contactUs", validateContact.validateContact);
 
 module.exports = router;

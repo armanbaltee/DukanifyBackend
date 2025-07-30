@@ -1,5 +1,5 @@
 // controllers/storeController.js
-const Store = require('/models/store.model');
+const Store = require('../../models/store.model');
 
 exports.searchStores = async (req, res) => {
   const { query } = req.query;
@@ -34,3 +34,64 @@ exports.searchStores = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+exports.createStore = async (req, res) => {
+    try {
+      const {
+        userId,
+        storeName,
+        storeAddress,
+        storePhone,
+        storeDescription,
+        openingTime,
+        closingTime,
+        category,
+        storePaymentMethods,
+      } = req.body;
+
+      
+
+      const newStore = new Store({
+        userId,
+        storeName,
+        storeAddress,
+        storePhone,
+        storeDescription,
+        storeTiming: {
+          openingTime,
+          closingTime,
+        },
+        category: JSON.parse(category),
+        storePaymentMethods: JSON.parse(storePaymentMethods),
+
+        storeLogo: req.files['storeLogo']?.[0]?.path || '',
+        storeBanner: req.files['storeBanner']?.map(file => file.path) || [],
+        storePictures: req.files['storePictures']?.map(file => file.path) || [],
+      });
+
+      await newStore.save();
+      res.status(201).json({ message: 'Store created', store: newStore });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error creating store', error });
+    }
+  }
+
+
+  exports.getStore = async (req, res) => {
+    const userId = req.params.id
+    console.log('userid==========', userId)
+    try{
+      const store = await Store.findOne({ userId })
+
+      if(!store){
+        return res.status(400).send({ message : 'Store Not Found!' })
+      }
+
+      res.status(200).send(store)
+    }catch(error){
+      console.log('Error in finding store', error)
+      res.status(400).send({ message : 'Store finding Error!!' })
+    }
+  }

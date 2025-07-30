@@ -5,6 +5,10 @@ const dotenv = require('dotenv').config();
 const session = require('express-session');
 const route = require('./routes/auth/auth.routes')
 const adminRoutes = require('./routes/admin/admin.routes')
+const storeRoutes = require('./routes/store/store.routes')
+const productCategory = require('./routes/product/category.routes')
+const productRoutes = require("./routes/product/product.routes")
+const profileRoutes = require('./routes/profile/profile.routes')
 
 const contactRoutes = require('./routes/auth/contact.routes'); 
 
@@ -25,16 +29,21 @@ app.use(session({
 }));
 app.use('/api/auth', route)
 app.use('/api/admin', adminRoutes);
-app.use('/api', contactRoutes);
+app.use('/api/store', storeRoutes)
+
+app.use('/product/category', productCategory);
+app.use('/product', productRoutes)
+app.use('/api/profile', profileRoutes)
+app.use('/api/contactUs' , contactRoutes)
+app.use('/uploads', express.static('uploads'));
+// app.use('/users', route);
 
 const PORT = process.env.PORT || 3000;
 
-mongoose
-  .connect("mongodb://localhost:27017/Dukanify", {
+mongoose.connect("mongodb://localhost:27017/Dukanify", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  })
-  .then(() => {
+  }).then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () =>
       console.log(`Server running at http://localhost:${PORT}`)

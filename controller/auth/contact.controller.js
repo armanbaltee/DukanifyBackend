@@ -1,9 +1,9 @@
 const Contact = require("../../models/contact.model");
 const nodemailer = require("nodemailer");
 
-exports.validateContact = async (req, res) => {
+const validateContact = async (req, res) => {
   const { firstName, lastName, phone, email, message } = req.body;
-  console.log("Incoming Contact Data:", req.body);
+  console.log("Contact Data:", req.body);
 
   try {
     const contact = new Contact(req.body);
@@ -39,4 +39,8 @@ exports.validateContact = async (req, res) => {
     console.error("Contact form error:", error);
     res.status(500).json({ error: "Failed to process contact form." });
   }
+};
+
+module.exports = {
+  validateContact,
 };

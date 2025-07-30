@@ -1,9 +1,21 @@
 
 const express = require('express');
 const router = express.Router();
-const { searchStores } = require('/controller/store/store-controller');
+const storeController = require('../../controller/store/store-controller')
+const upload = require('../../middleware/uploads')
 
 // Route for store search
-router.get('/search', searchStores);
+router.get('/search', storeController.searchStores);
+
+router.post('/registerStore', upload.fields([
+    { name: 'storeLogo', maxCount: 1 },
+    { name: 'storeBanner', maxCount: 5 },
+    { name: 'storePictures', maxCount: 10 },
+  ]), storeController.createStore)
+
+
+router.get('/getStore/:id', storeController.getStore)
+
+
 
 module.exports = router;

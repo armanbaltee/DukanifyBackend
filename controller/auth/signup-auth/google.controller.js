@@ -1,5 +1,6 @@
 const client = require('../../../config/googleClient');
 const User = require('../../../models/auth/user.model');
+const JWT = require("jsonwebtoken")
 
 
 exports.googleLogin = async (req, res) => {
@@ -34,9 +35,15 @@ exports.googleLogin = async (req, res) => {
 
       req.session.user = user;
 
+      const authToken = JWT.sign(
+        {id: user._id},
+        process.env.SECRET_KEY,
+        {expiresIn: '1hr'}
+      )
       return res.status(201).json({
         success: true,
         user: {
+          token: authToken,
           name: user.name,
           email: user.email
         }
@@ -49,10 +56,16 @@ exports.googleLogin = async (req, res) => {
       }
 
       req.session.user = user;
+      const authToken = JWT.sign(
+        {id: user._id},
+        process.env.SECRET_KEY,
+        {expiresIn: '1hr'}
+      )
 
       return res.status(200).json({
         success: true,
         user: {
+          token: authToken,
           name: user.name,
           email: user.email
         }
