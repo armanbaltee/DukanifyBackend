@@ -1,7 +1,9 @@
 // controllers/storeController.js
 const Store = require('../../models/store.model');
+const Product = require('../../models/product/product.model');
 
-exports.searchStores = async (req, res) => {
+
+exports.searchEcommerce = async (req, res) => {
   const { query } = req.query;
 
   if (!query || query.length < 3) {
@@ -9,89 +11,93 @@ exports.searchStores = async (req, res) => {
   }
 
   try {
-    const currentTime = new Date().toLocaleTimeString('en-GB', { hour12: false }); // "14:32:00"
 
-    const stores = await Store.find({
-      storeName: { $regex: query, $options: 'i' }
-    })
-      .select('storeName storeLogo storeTiming')
-      .limit(4)
-      .lean(); // lean() so we can modify the results
+    const matchedStores = await Store.find({
+      storeName: { $regex: query, $options: 'i' },
+      isStoreVerified: true
+    }).select('_id storeName storeLogo storeTiming');
 
-    // Add status field to each store
-    const updatedStores = stores.map(store => {
-      const { openingTime, closingTime } = store.storeTiming;
-      const isOpen = currentTime >= openingTime && currentTime <= closingTime;
-      return {
-        ...store,
-        status: isOpen ? 'Open' : 'Closed'
-      };
+
+    const matchedProducts = await Product.find({
+      name: { $regex: query, $options: 'i' },
+      // stock: { $gt: 0 },
+      // isActive: true
+    }).populate({
+      path: 'storeId',
+      match: { isStoreVerified: true },
+      select: '_id storeName storeLogo storeTiming'
     });
 
-    res.status(200).json(updatedStores);
-  } catch (err) {
-    console.error(err);
+    const filteredProducts = matchedProducts.filter(p => p.storeId !== null);
+
+    res.status(200).json({
+      stores: matchedStores,
+      products: filteredProducts
+    });
+
+  } catch (error) {
+    console.error('Search Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
 
 exports.createStore = async (req, res) => {
-    try {
-      const {
-        userId,
-        storeName,
-        storeAddress,
-        storePhone,
-        storeDescription,
+  try {
+    const {
+      userId,
+      storeName,
+      storeAddress,
+      storePhone,
+      storeDescription,
+      openingTime,
+      closingTime,
+      category,
+      storePaymentMethods,
+    } = req.body;
+
+
+
+    const newStore = new Store({
+      userId,
+      storeName,
+      storeAddress,
+      storePhone,
+      storeDescription,
+      storeTiming: {
         openingTime,
         closingTime,
-        category,
-        storePaymentMethods,
-      } = req.body;
+      },
+      category: JSON.parse(category),
+      storePaymentMethods: JSON.parse(storePaymentMethods),
 
-      
+      storeLogo: req.files['storeLogo']?.[0]?.path || '',
+      storeBanner: req.files['storeBanner']?.map(file => file.path) || [],
+      storePictures: req.files['storePictures']?.map(file => file.path) || [],
+    });
 
-      const newStore = new Store({
-        userId,
-        storeName,
-        storeAddress,
-        storePhone,
-        storeDescription,
-        storeTiming: {
-          openingTime,
-          closingTime,
-        },
-        category: JSON.parse(category),
-        storePaymentMethods: JSON.parse(storePaymentMethods),
-
-        storeLogo: req.files['storeLogo']?.[0]?.path || '',
-        storeBanner: req.files['storeBanner']?.map(file => file.path) || [],
-        storePictures: req.files['storePictures']?.map(file => file.path) || [],
-      });
-
-      await newStore.save();
-      res.status(201).json({ message: 'Store created', store: newStore });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error creating store', error });
-    }
+    await newStore.save();
+    res.status(201).json({ message: 'Store created', store: newStore });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error creating store', error });
   }
+}
 
 
-  exports.getStore = async (req, res) => {
-    const userId = req.params.id
-    console.log('userid==========', userId)
-    try{
-      const store = await Store.findOne({ userId })
+exports.getStore = async (req, res) => {
+  const userId = req.params.id
+  console.log('userid==========', userId)
+  try {
+    const store = await Store.findOne({ userId })
 
-      if(!store){
-        return res.status(400).send({ message : 'Store Not Found!' })
-      }
-
-      res.status(200).send(store)
-    }catch(error){
-      console.log('Error in finding store', error)
-      res.status(400).send({ message : 'Store finding Error!!' })
+    if (!store) {
+      return res.status(400).send({ message: 'Store Not Found!' })
     }
+
+    res.status(200).send(store)
+  } catch (error) {
+    console.log('Error in finding store', error)
+    res.status(400).send({ message: 'Store finding Error!!' })
   }
+}
