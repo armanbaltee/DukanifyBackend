@@ -51,6 +51,8 @@ exports.createStore = async (req, res) => {
 
       
 
+      
+
       const newStore = new Store({
         userId,
         storeName,
@@ -97,12 +99,12 @@ exports.createStore = async (req, res) => {
   }
 
   exports.getStoreById = async (req, res) => {
-    const storeId = req.params.id
+    const userId = req.params.id
 
-    console.log('storeid===========', storeId)
+    console.log('storeid===========', userId)
 
     try{
-      const store = await Store.findById(storeId)
+      const store = await Store.findOne({ userId })
 
       if(!store){
         return res.status(400).send({ message : 'Store not found' })

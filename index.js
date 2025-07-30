@@ -40,13 +40,12 @@ app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 3000;
 
-mongoose.connect("mongodb://localhost:27017/Dukanify", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }).then(() => {
-    console.log("MongoDB connected");
-    app.listen(PORT, () =>
-      console.log(`Server running at http://localhost:${PORT}`)
-    );
+mongoose.connect('mongodb://localhost:27017/Dukanify', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
   })
   .catch((err) => console.error("MongoDB connection error:", err));
