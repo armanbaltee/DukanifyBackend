@@ -71,18 +71,61 @@ const sendOTPEmail = async (email, otp) => {
     }
   });
 
-  const mailOptions = {
-    from: `"APP_NAME" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: 'Password Reset OTP',
-    html: `
-      <h2>Hello from YourApp!</h2>
-      <p>Your OTP for password reset is: <strong>${otp}</strong></p>
-      <p>This OTP is valid for 2 minutes.</p>
-      <br>
-      <small>If you did not request this, please ignore this email.</small>
-    `
-  };
+const mailOptions = {
+  from: `"${process.env.APP_NAME}" <${process.env.EMAIL_USER}>`,
+  to: email,
+  subject: 'Password Reset OTP',
+  html: `
+    <div style="background-color: #FCF9F6; padding: 40px 20px; font-family: 'Segoe UI', Tahoma, sans-serif;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #FFFFFF; border-radius: 12px; padding: 35px 40px; box-shadow: 0 12px 30px rgba(72, 66, 63, 0.15);">
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #A8765F; margin-bottom: 8px; font-size: 26px; letter-spacing: 1px;">Password Reset</h1>
+          <p style="color: #7B8D8E; font-size: 14px;">Use the OTP below to continue</p>
+        </div>
+
+        <p style="color: #4A423F; font-size: 16px; line-height: 1.6;">
+          Hello from <strong>${process.env.APP_NAME}</strong>,<br><br>
+          Your OTP for password reset is:
+        </p>
+
+        <div style="text-align: center; margin: 35px 0;">
+          <div style="
+            display: inline-block;
+            background-color: #D4A373;
+            color: #FFFFFF;
+            padding: 16px 36px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+            letter-spacing: 4px;
+            box-shadow: 0 6px 18px rgba(212, 163, 115, 0.5);
+          ">
+            ${otp}
+          </div>
+        </div>
+
+        <p style="color: #4A423F; font-size: 16px; line-height: 1.6;">
+          This OTP is valid for <strong>2 minutes</strong>. Please do not share it with anyone.
+        </p>
+
+        <p style="color: #7B8D8E; margin-top: 40px; font-size: 14px;">
+          If you did not request this password reset, you can safely ignore this email.
+        </p>
+
+        <p style="color: #4A423F; font-size: 14px;">
+          Thank you,<br>
+          <strong>The ${process.env.APP_NAME} Team</strong>
+        </p>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #7B8D8E;">
+        © ${new Date().getFullYear()} ${process.env.APP_NAME}. All rights reserved.
+      </div>
+    </div>
+  `
+};
+
 
   await transporter.sendMail(mailOptions);
 };

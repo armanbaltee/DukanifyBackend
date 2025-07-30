@@ -1,15 +1,10 @@
 const User = require('../../models/auth/user.model');
-const fs = require('fs');
-const path = require('path');
-
 
 // GET USER BY ID
-
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    // Only fetch specific fields for security
     const user = await User.findById(userId).select('name email photo');
 
     if (!user) {
@@ -23,8 +18,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// UPDATE USER BY ID (name + optional photo)
-
+// UPDATE USER BY ID
 exports.updateUserById = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -32,14 +26,8 @@ exports.updateUserById = async (req, res) => {
 
     const updateData = { name };
 
-    if (req.file) {
-      updateData.photo = req.file.filename;
-
-      // Remove old photo if exists
-      const user = await User.findById(userId);
-      if (user?.photo && fs.existsSync(`uploads/${user.photo}`)) {
-        fs.unlinkSync(`uploads/${user.photo}`);
-      }
+    if (req.file && req.file.path) {
+      updateData.photo = req.file.path; // Cloudinary URL
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -54,3 +42,4 @@ exports.updateUserById = async (req, res) => {
     res.status(500).json({ message: 'Failed to update profile' });
   }
 };
+
