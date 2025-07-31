@@ -10,6 +10,8 @@ router.put('/update/:id', upload.single('image'), productController.updateProduc
 router.delete('/delete/:id', productController.deleteProduct)
 router.get('/getById/:id', productController.getProductById)
 
+router.get('/landing-products', productController.getLandingProducts);
+
 
 router.put('bulkUpdate', productScript.bulkUpateProduct)
 

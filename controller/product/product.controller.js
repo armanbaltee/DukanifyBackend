@@ -128,11 +128,27 @@ const getProductById = async (req, res)=>{
     
   }
 }
+const getLandingProducts = async (req, res) => {
+  try {
+    const products = await Product.find({
+      isActive: true,
+      stock: { $gt: 5 }
+    })
+    .limit(10)
+    .populate('storeId', 'storeName isStoreVerified');
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Landing products error:', error);
+    res.status(500).json({ message: 'Failed to load landing products' });
+  }
+};
 
 module.exports = {
   addProduct,
   getAllProducts,
   updateProduct,
   deleteProduct,
-  getProductById
+  getProductById,
+  getLandingProducts
 };
