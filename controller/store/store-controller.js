@@ -117,3 +117,19 @@ exports.createStore = async (req, res) => {
       res.status(400).send({ message : 'Store finding Error!!' })
     }
   }
+
+
+
+  exports.getAllStoreNames = async (req, res) => {
+    try{
+      const storeNames = await Store.find().select('storeName userId')
+
+      if(!storeNames) return res.status(400).send({ message : 'No store found!' })
+
+      res.status(200).send(storeNames)
+      
+    }catch(error){
+      console.log('Error in finding Store Names')
+      res.status(400).send({ message : 'Error in finding StoreNames' })
+  }
+  }
