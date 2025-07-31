@@ -58,7 +58,25 @@ const productAddtoCart = async (req, res) => {
   }
 };
 
+const getFeatureProduct = async (req, res)=>{
+    try {
+        const id = req.params.id;
+        const relatedProduct = await Product.find({storeId: id})
+        if(!relatedProduct){
+            return res
+            .status(500)
+            .json({ message: "No Product Found"});
+        }
+        res.status(200).json({message: "related product:", data: relatedProduct})
+    } catch (error) {
+        return res
+      .status(500)
+      .json({ message: "Server Error", err: error.message });
+    }
+}
+
 module.exports = {
   getProductDetailById,
-  productAddtoCart
+  productAddtoCart,
+  getFeatureProduct
 };

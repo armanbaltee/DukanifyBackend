@@ -14,5 +14,6 @@ router.get('/landing-products', productController.getLandingProducts);
 router.get('/getproductdeatail/:id', productDetailController.getProductDetailById)
 router.post('/addtocart', productDetailController.productAddtoCart)
 router.put('bulkUpdate', productScript.bulkUpateProduct)
+router.get('/getfeaturedproduct/:id', productDetailController.getFeatureProduct)
 
 module.exports = router;
