@@ -86,10 +86,9 @@ const updateProduct = async (req, res) => {
       isActive,
     };
 
-    if (req.file) {
-      updateData.image = req.file.path;
+    if (req.file && req.file.path) {
+      updateData.image = req.file.path; 
     }
-
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true
     });
@@ -117,9 +116,23 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res)=>{
+  try {
+    const id= req.params.id
+    const product = await Product.findById(id).populate('category');;
+    if(!id){
+      return res.status(500).json({message: "No product Id"});
+    }
+    res.status(200).json({message: "Product is: ", product})
+  } catch (error) {
+    
+  }
+}
+
 module.exports = {
   addProduct,
   getAllProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getProductById
 };
