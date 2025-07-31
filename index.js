@@ -9,6 +9,7 @@ const storeRoutes = require('./routes/store/store.routes')
 const productCategory = require('./routes/product/category.routes')
 const productRoutes = require("./routes/product/product.routes")
 const profileRoutes = require('./routes/profile/profile.routes')
+const Store = require ('./models/store.model')
 
 const app = express();
 app.use(cors({
