@@ -3,6 +3,35 @@ const Store = require('../../models/store.model');
 const Product = require('../../models/product/product.model');
 
 
+exports.getVerifiedSellers = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const filter = { isStoreVerified: true };
+
+    const total = await Store.countDocuments(filter);
+
+    const stores = await Store.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .select(
+        '_id storeName storeAddress storeLogo storeBanner storeDescription storePhone storeTiming certifications isStoreVerified'
+      )
+      .lean();
+
+    res.status(200).json({
+      stores,
+      total,
+      currentPage: page
+    });
+  } catch (error) {
+    console.error('Error fetching verified sellers:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 exports.searchEcommerce = async (req, res) => {
   const { query } = req.query;
 
