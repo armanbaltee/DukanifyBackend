@@ -12,7 +12,6 @@ const profileRoutes = require('./routes/profile/profile.routes')
 const Store = require ('./models/store.model')
 const SearchRoutes = require('./routes/search/search.routes')
 const checkoutRoutes = require('./routes/checkout/checkout.routes')
-const SearchRoutes = require('./routes/search/search.routes')
 
 const app = express();
 app.use(cors({
