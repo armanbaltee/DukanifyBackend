@@ -17,7 +17,6 @@ const getProductDetailById = async (req, res) => {
       image: product.image,
       storeId: product.storeId,
     };
-    console.log("Peoduct---------->", productDetails);
     res.status(200).json({ message: "Product Details", data: productDetails });
   } catch (error) {
     return res
