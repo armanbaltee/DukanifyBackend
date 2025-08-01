@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../../../models/auth/user.model');
 const {
   generateOTP,
@@ -62,4 +63,40 @@ exports.resetPassword = async (req, res) => {
 
 const generateLoginOTP = () => {
   return Math.floor(1000 + Math.random() * 9000).toString();
+};
+
+exports.changePassword = async (req, res) => {
+  const { id, oldPassword, newPassword } = req.body;
+console.log('Received body:======', req.body);
+  try {
+    const user = await User.findById(id);
+
+    console.log('user for change', user)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Compare old password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json('Incorrect old password');
+    }
+
+    // Hash new password
+    const hashed = await hashPassword(newPassword);
+
+    // Update password
+    await User.findByIdAndUpdate(id, { password: hashed });
+
+    const token = generateToken(user._id); // Optional: issue new token
+
+    return res.status(200).json({
+      message: 'Password changed successfully',
+      token: token,
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
 };

@@ -21,6 +21,8 @@ router.get('/getStore/:id', storeController.getStore)
 
 router.get('/getStoreById/:id', storeController.getStoreById)
 
+router.get('/getAllStoreNames', storeController.getAllStoreNames)
+
 
 
 module.exports = router;
