@@ -5,7 +5,10 @@ const storeController = require('../../controller/store/store-controller')
 const upload = require('../../middleware/uploads')
 
 // Route for store search
-router.get('/search', storeController.searchStores);
+router.get('/search', storeController.searchEcommerce);
+router.get('/verified-sellers', storeController.getVerifiedSellers);
+
+
 
 router.post('/registerStore', upload.fields([
     { name: 'storeLogo', maxCount: 1 },
@@ -17,6 +20,8 @@ router.post('/registerStore', upload.fields([
 router.get('/getStore/:id', storeController.getStore)
 
 router.get('/getStoreById/:id', storeController.getStoreById)
+
+router.get('/getAllStoreNames', storeController.getAllStoreNames)
 
 
 

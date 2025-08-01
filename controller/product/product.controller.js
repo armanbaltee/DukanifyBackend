@@ -86,10 +86,9 @@ const updateProduct = async (req, res) => {
       isActive,
     };
 
-    if (req.file) {
-      updateData.image = req.file.path;
+    if (req.file && req.file.path) {
+      updateData.image = req.file.path; 
     }
-
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true
     });
@@ -117,9 +116,39 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res)=>{
+  try {
+    const id= req.params.id
+    const product = await Product.findById(id).populate('category');;
+    if(!id){
+      return res.status(500).json({message: "No product Id"});
+    }
+    res.status(200).json({message: "Product is: ", product})
+  } catch (error) {
+    
+  }
+}
+const getLandingProducts = async (req, res) => {
+  try {
+    const products = await Product.find({
+      isActive: true,
+      stock: { $gt: 5 }
+    })
+    .limit(10)
+    .populate('storeId', 'storeName isStoreVerified');
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Landing products error:', error);
+    res.status(500).json({ message: 'Failed to load landing products' });
+  }
+};
+
 module.exports = {
   addProduct,
   getAllProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getProductById,
+  getLandingProducts
 };

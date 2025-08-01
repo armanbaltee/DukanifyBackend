@@ -23,6 +23,8 @@ exports.updateUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const { name } = req.body;
+    console.log('REQ BODY:', req.body);
+console.log('REQ FILE:', req.file);
 
     const updateData = { name };
 
@@ -35,11 +37,17 @@ exports.updateUserById = async (req, res) => {
       { $set: updateData },
       { new: true }
     ).select('name email photo');
+    console.log("REQ BODY:", req.body);
+console.log("REQ FILE:", req.file);
 
     res.status(200).json({ message: 'Profile updated', user: updatedUser });
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Failed to update profile' });
-  }
+  console.error("Update profile error:", error);
+res.status(500).json({
+  success: false,
+  message: 'Internal server error',
+  error: error.message || error.toString(),
+});
+}
 };
 
