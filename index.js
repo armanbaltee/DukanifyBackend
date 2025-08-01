@@ -10,8 +10,8 @@ const productCategory = require('./routes/product/category.routes')
 const productRoutes = require("./routes/product/product.routes")
 const profileRoutes = require('./routes/profile/profile.routes')
 const Store = require ('./models/store.model')
-const checkoutRoutes = require('./routes/checkout/checkout.routes')
 const SearchRoutes = require('./routes/search/search.routes')
+const checkoutRoutes = require('./routes/checkout/checkout.routes')
 
 const app = express();
 app.use(cors({
@@ -32,12 +32,11 @@ app.use('/api/store', storeRoutes)
 app.use('/product/category', productCategory);
 app.use('/product', productRoutes)
 app.use('/api/profile', profileRoutes)
+app.use('/uploads', express.static('uploads'));
+app.use('/api/search', SearchRoutes);// app.use('/users', route);
 
 app.use('/checkout', checkoutRoutes)
 
-
-app.use('/uploads', express.static('uploads'));
-app.use('/api/search', SearchRoutes);// app.use('/users', route);
 
 const PORT = process.env.PORT || 3000;
 
