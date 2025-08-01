@@ -5,7 +5,7 @@ exports.getAllOrders = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const orders = await BuyerOrder.find({ userID: userId })
+    const orders = await BuyerOrder.find({ userID: userId, isOrderConfirmed: false })
       .sort({ createdAt: -1 })
       .populate('userID', 'name')
       .populate('orderDetails.storeID', 'storeName')
