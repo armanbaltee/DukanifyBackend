@@ -33,6 +33,17 @@ const buyerOrderSchema = mongoose.Schema({
     isOrderConfirmed: {
         type: Boolean,
         default: false
+    },
+    buyerPhone: {
+        type: String
+    },
+    buyerNotes: {
+        type: String
+    },
+    orderStatus: {
+        type: String,
+        enum: ["Pending", "Accept", "Reject", "Packed", "Fullfilled", 'Cancel'],
+        default: "Pending"
     }
 }, { timestamps: true });
 
