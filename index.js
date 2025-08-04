@@ -16,7 +16,7 @@ const searchRoutes = require('./routes/search/search.routes');
 const checkoutRoutes = require('./routes/checkout/checkout.routes');
 const socketUtil = require('./utils/socket.order');
 const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes')
-
+const buyerOrderRoutes = require('./routes/buyer orders/buyer.order.routes')
 const app = express();
 const server = http.createServer(app); 
 const io = new Server(server, {
@@ -72,7 +72,7 @@ app.use('/checkout', checkoutRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/search', searchRoutes);
 app.use('/checkout', checkoutRoutes)
-
+app.use('/buyer', buyerOrderRoutes)
 app.use('/storeOrders', storeOrdersRoutes)
 
 

@@ -1,7 +1,7 @@
-const socket = require('../../utils/socket.order');  // Your socket utility for emitting events
+const socket = require('../../utils/socket.order'); 
 const BuyerOrder = require('../../models/order/buyer order/buyer.order');
 
-// Get all orders by userId (your existing function)
+
 const getAllOrders = async (req, res) => {
   const userId = req.params.userId;
 
@@ -9,7 +9,6 @@ const getAllOrders = async (req, res) => {
     const orders = await BuyerOrder.find({ userID: userId })
       .populate('orderDetails.storeID')
       .populate('orderDetails.products.productID');
-
     const flattenedOrders = [];
 
     orders.forEach(order => {
@@ -17,13 +16,13 @@ const getAllOrders = async (req, res) => {
         orderDetail.products.forEach(product => {
           flattenedOrders.push({
             orderId: order._id,
-            productId: product.productID._id,
+            productId: product.productID?._id,
             productName: product.productID.name,
             image: product.productID.image,
             quantity: product.quantity,
             totalPrice: product.totalPrice,
-            storeId: orderDetail.storeID._id,
-            storeName: orderDetail.storeID.name,
+            storeId: orderDetail.storeID?._id,
+            storeName: orderDetail.storeID?.name,
             status: order.orderStatus.toLowerCase(),
             date: order.createdAt
           });
@@ -38,35 +37,30 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-// Update order status and notify user via socket
 const updateOrderStatus = async (req, res) => {
   try {
     const { orderId, newStatus, userId } = req.body;
-
-    // Validate newStatus against allowed statuses
+s
     const allowedStatuses = ["Pending", "Accept", "Reject", "Packed", "Fullfilled"];
     if (!allowedStatuses.includes(newStatus)) {
       return res.status(400).json({ message: 'Invalid order status' });
     }
 
-    // Find the order by id
     const order = await BuyerOrder.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Update orderStatus
     order.orderStatus = newStatus;
     await order.save();
 
-    // Prepare data to emit
     const notificationData = {
       orderId: order._id,
       status: order.orderStatus.toLowerCase(),
       updatedAt: order.updatedAt
     };
 
-    // Emit real-time update to the specific user
+
     socket.emitToUser(userId, 'orderStatusUpdated', notificationData);
 
     return res.status(200).json({ message: 'Order status updated', order });
@@ -98,7 +92,7 @@ const cancelOrder = async (req, res) => {
       timestamp: new Date()
     };
 
-    // Emit to seller (storeId assumed to be used in socket room)
+
     socket.emitToStore(storeId, 'orderCancelled', notification);
 
     return res.status(200).json({ message: 'Order cancelled', notification });
