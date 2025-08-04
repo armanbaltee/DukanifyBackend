@@ -70,7 +70,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/checkout', checkoutRoutes);
 app.use('/uploads', express.static('uploads'));
-app.use('/api/search', SearchRoutes);
+app.use('/api/search', searchRoutes);
 app.use('/checkout', checkoutRoutes)
 
 app.use('/storeOrders', storeOrdersRoutes)
