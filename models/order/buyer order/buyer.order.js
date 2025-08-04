@@ -34,6 +34,12 @@ const buyerOrderSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    buyerPhone: {
+        type: String
+    },
+    buyerNotes: {
+        type: String
+    },
     orderStatus: {
         type: String,
         enum: ["Pending", "Accept", "Reject", "Packed", "Fullfilled", 'Cancel'],

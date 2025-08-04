@@ -15,6 +15,7 @@ const checkoutRoutes = require('./routes/checkout/checkout.routes')
 const http = require('http'); 
 const { Server } = require('socket.io'); 
 const socketUtil = require('./utils/socket.order');
+const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes')
 
 const app = express();
 const server = http.createServer(app);
@@ -68,6 +69,8 @@ app.use('/api/profile', profileRoutes)
 app.use('/uploads', express.static('uploads'));
 app.use('/api/search', SearchRoutes);
 app.use('/checkout', checkoutRoutes)
+
+app.use('/storeOrders', storeOrdersRoutes)
 
 
 const PORT = process.env.PORT || 3000;
