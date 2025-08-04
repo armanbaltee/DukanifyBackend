@@ -15,6 +15,7 @@ const profileRoutes = require('./routes/profile/profile.routes');
 const searchRoutes = require('./routes/search/search.routes');
 const checkoutRoutes = require('./routes/checkout/checkout.routes');
 const socketUtil = require('./utils/socket.order');
+const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes')
 
 const app = express();
 const server = http.createServer(app); 
@@ -69,6 +70,11 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/checkout', checkoutRoutes);
 app.use('/uploads', express.static('uploads'));
+app.use('/api/search', SearchRoutes);
+app.use('/checkout', checkoutRoutes)
+
+app.use('/storeOrders', storeOrdersRoutes)
+
 
 const PORT = process.env.PORT || 3000;
 
