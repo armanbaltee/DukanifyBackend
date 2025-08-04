@@ -4,6 +4,8 @@ const adminMiddleware = require("../../middleware/admin/admin.middleware");
 const adminController = require("../../controller/admin/admin.controller");
 
 router.post("/login",adminMiddleware.adminMiddleware, adminController.login)
-router.get('/getpending', adminController.getPendingList);
+router.get('/getallstore', adminController.getAllStore);
+router.put('/acceptrequest/:storeId', adminController.acceptRequest);
+router.put('/rejectrequest/:storeId', adminController.rejectRequest);
 
 module.exports = router
