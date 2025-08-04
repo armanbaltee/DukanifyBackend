@@ -42,7 +42,7 @@ const buyerOrderSchema = mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ["Pending", "Accept", "Reject", "Packed", "Fullfilled"],
+        enum: ["Pending", "Accept", "Reject", "Packed", "Fullfilled", 'Cancel'],
         default: "Pending"
     }
 }, { timestamps: true });

@@ -12,9 +12,42 @@ const profileRoutes = require('./routes/profile/profile.routes')
 const Store = require ('./models/store.model')
 const SearchRoutes = require('./routes/search/search.routes')
 const checkoutRoutes = require('./routes/checkout/checkout.routes')
+const http = require('http'); 
+const { Server } = require('socket.io'); 
+const socketUtil = require('./utils/socket.order');
 const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes')
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT'],
+    credentials: true
+  }
+});
+
+socketUtil.initSocket(io); 
+
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+
+  socket.on('joinStore', (storeId) => {
+    console.log(`Store joined room: ${storeId}`);
+    socket.join(storeId);
+  });
+
+  socket.on('joinBuyer', (userId) => {
+    console.log(`Buyer joined room: ${userId}`);
+    socket.join(userId);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
 app.use(cors({
   origin: 'http://localhost:4200',
   credentials: true
@@ -35,7 +68,6 @@ app.use('/product', productRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/uploads', express.static('uploads'));
 app.use('/api/search', SearchRoutes);
-
 app.use('/checkout', checkoutRoutes)
 
 app.use('/storeOrders', storeOrdersRoutes)
