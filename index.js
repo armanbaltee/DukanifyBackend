@@ -12,6 +12,7 @@ const profileRoutes = require('./routes/profile/profile.routes')
 const Store = require ('./models/store.model')
 const SearchRoutes = require('./routes/search/search.routes')
 const checkoutRoutes = require('./routes/checkout/checkout.routes')
+const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes')
 
 const app = express();
 app.use(cors({
@@ -36,6 +37,8 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/search', SearchRoutes);
 
 app.use('/checkout', checkoutRoutes)
+
+app.use('/storeOrders', storeOrdersRoutes)
 
 
 const PORT = process.env.PORT || 3000;

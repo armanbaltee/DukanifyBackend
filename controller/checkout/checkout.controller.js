@@ -164,6 +164,7 @@ exports.updateOrder = async (req, res) => {
 
 exports.confirmCheckout = async (req, res) => {
   const userId = req.params.id;
+  const {phone, notes } = req.body
 
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
@@ -180,7 +181,7 @@ exports.confirmCheckout = async (req, res) => {
     
     const result = await BuyerOrder.updateMany(
       { userID: userId, isOrderConfirmed: false },
-      { $set: { isOrderConfirmed: true } }
+      { $set: { isOrderConfirmed: true, buyerPhone : phone, buyerNotes : notes } }
     );
 
     res.status(200).json({
