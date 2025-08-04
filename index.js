@@ -33,7 +33,7 @@ app.use('/product/category', productCategory);
 app.use('/product', productRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/uploads', express.static('uploads'));
-app.use('/api/search', SearchRoutes);// app.use('/users', route);
+app.use('/api/search', SearchRoutes);
 
 app.use('/checkout', checkoutRoutes)
 
