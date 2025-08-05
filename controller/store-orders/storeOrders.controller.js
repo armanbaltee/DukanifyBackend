@@ -1,10 +1,10 @@
 const BuyerOrder = require('../../models/order/buyer order/buyer.order')
 
-exports.getAllBuyerOrders = async (req, res) => {
-  const userId = req.params.id;
+exports.getAllOrdersByStore = async (req, res) => {
+  const storeId = req.params.id;
 
   try {
-    const orders = await BuyerOrder.find({ userID: userId })
+    const orders = await BuyerOrder.find({ 'orderDetails.storeID': storeId })
       .populate('userID', 'name')
       .populate('orderDetails.products.productID', 'name image');
 
@@ -19,14 +19,16 @@ exports.getAllBuyerOrders = async (req, res) => {
       const buyerName = order.userID?.name;
       const buyerPhone = order.buyerPhone;
       const buyerNotes = order.buyerNotes;
-      const orderedAt = order.createdAt
+      const orderedAt = order.createdAt;
 
       for (const detail of order.orderDetails) {
+        if (detail.storeID.toString() !== storeId) continue; // Filter only current store
+
         for (const p of detail.products) {
           const product = p.productID;
 
           const orderObj = {
-            id : order._id,
+            id: order._id,
             orderId: order._id.toString().slice(17),
             buyerName,
             buyerPhone,
@@ -66,6 +68,7 @@ exports.getAllBuyerOrders = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err });
   }
 };
+
 
 
 exports.changeOrderStatus = async (req, res) => {
