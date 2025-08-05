@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require("../../../models/auth/user.model");
 const { generateOTP, sendOTP } = require("../../../service/userService");
 
-const signup = async (req, res, next) => {
+const signup = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
 
@@ -50,9 +50,16 @@ const signup = async (req, res, next) => {
     });
 
   } catch (error) {
-    console.error("❌ Signup Error:", error);
-    res.status(500).json({ success: false, message: "Server error. Please try again later." });
+    // next(error);
+     res.json({
+      message: `failed to sign up ${error}`
+      // userId: user._id
+    });
   }
+};
+
+const protectedRoute = (req, res) => {
+  res.status(200).json({ message: "Protected content accessed" });
 };
 
 module.exports = { signup };
