@@ -15,21 +15,53 @@ const profileRoutes = require('./routes/profile/profile.routes');
 const searchRoutes = require('./routes/search/search.routes');
 const checkoutRoutes = require('./routes/checkout/checkout.routes');
 const socketUtil = require('./utils/socket.order');
-const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes')
-const buyerOrderRoutes = require('./routes/buyer orders/buyer.order.routes')
+const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes');
+const buyerOrderRoutes = require('./routes/buyer orders/buyer.order.routes');
+
 const app = express();
-const server = http.createServer(app); 
+const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:4200',
+    origin: ['http://localhost:4200', 'http://localhost:59257'],
     methods: ['GET', 'POST', 'PUT'],
     credentials: true
   }
 });
+const allowedOrigins = ['http://localhost:4200', 'http://localhost:59257'];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
+app.use(express.json());
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/store', storeRoutes);
+app.use('/product/category', categoryRoutes);
+app.use('/product', productRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/checkout', checkoutRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use('/buyer', buyerOrderRoutes);
+app.use('/storeOrders', storeOrdersRoutes);
 
 socketUtil.initSocket(io);
-
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
@@ -47,35 +79,6 @@ io.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
   });
 });
-
-app.use(cors({
-  origin: 'http://localhost:4200',
-  credentials: true
-}));
-app.use(express.json());
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false }
-}));
-
-
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/store', storeRoutes);
-app.use('/product/category', categoryRoutes);
-app.use('/product', productRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/search', searchRoutes);
-app.use('/checkout', checkoutRoutes);
-app.use('/uploads', express.static('uploads'));
-app.use('/api/search', SearchRoutes);
-
-app.use('/checkout', checkoutRoutes)
-app.use('/buyer', buyerOrderRoutes)
-app.use('/storeOrders', storeOrdersRoutes)
-
 
 const PORT = process.env.PORT || 3000;
 
