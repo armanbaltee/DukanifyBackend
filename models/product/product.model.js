@@ -25,8 +25,9 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     unit: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: 'Unit'
     },
     stock: {
       type: Number,

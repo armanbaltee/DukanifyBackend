@@ -175,4 +175,38 @@ exports.getAllStoreNames = async (req, res) => {
     console.log('Error in finding Store Names')
     res.status(400).send({ message: 'Error in finding StoreNames' })
   }
-}
+  }
+
+
+  exports.accessSellerDashboard = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const store = await Store.findOne({ userId });
+
+    if (!store) {
+      return res.status(200).json({
+        status: 'no-store',
+        message: 'Register your store to continue.'
+      });
+    }
+
+    if (!store.isStoreVerified) {
+      return res.status(200).json({
+        status: 'pending',
+        message: 'Store verification is still pending.'
+      });
+    }
+
+    return res.status(200).json({
+      status: 'verified',
+      message: 'Access granted to seller dashboard.',
+      store: store
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server Error",
+      error: error.message
+    });
+  }
+};
