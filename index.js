@@ -9,7 +9,7 @@ const { Server } = require('socket.io');
 const authRoutes = require('./routes/auth/auth.routes');
 const adminRoutes = require('./routes/admin/admin.routes');
 const storeRoutes = require('./routes/store/store.routes');
-const categoryRoutes = require('./routes/product/category.routes');
+const categoryRoutes = require('./routes/script/category.routes');
 const productRoutes = require('./routes/product/product.routes');
 const profileRoutes = require('./routes/profile/profile.routes');
 const searchRoutes = require('./routes/search/search.routes');
@@ -17,7 +17,7 @@ const checkoutRoutes = require('./routes/checkout/checkout.routes');
 const socketUtil = require('./utils/socket.order');
 const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes');
 const buyerOrderRoutes = require('./routes/buyer orders/buyer.order.routes');
-
+const unitsRoutes = require('./routes/script/scripts.routes')
 const app = express();
 const server = http.createServer(app);
 
@@ -60,7 +60,7 @@ app.use('/checkout', checkoutRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/buyer', buyerOrderRoutes);
 app.use('/storeOrders', storeOrdersRoutes);
-
+app.use('/product/unit', unitsRoutes)
 socketUtil.initSocket(io);
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
