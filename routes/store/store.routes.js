@@ -23,6 +23,7 @@ router.get('/getStoreById/:id', storeController.getStoreById)
 
 router.get('/getAllStoreNames', storeController.getAllStoreNames)
 
+router.get('/checkaccess/:id', storeController.accessSellerDashboard)
 
 
 module.exports = router;
