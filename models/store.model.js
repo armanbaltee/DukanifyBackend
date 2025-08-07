@@ -5,7 +5,17 @@ const storeSchema = new mongoose.Schema({
 
   storeName: { type: String, required: true },
   storeAddress: { type: String, required: true },
-
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number], // [lng, lat]
+      required: true
+    }
+  },
   storeLogo: { type: String },
   storeBanner: [{ type: String }],
   storePictures: [{ type: String }],
