@@ -1,4 +1,4 @@
-const Category = require("../../models/product/category.model");
+const Category = require("../models/product/category.model");
 
 const singleCategoryAdd = async (req, res)=>{
     try {
@@ -45,9 +45,9 @@ const getAllCategories = async (req, res) => {
 const searchCategory = async (req, res)=>{
     try {
     const query = req.query.query || '';
-    if (query.length < 3) {
-      return res.status(400).json({ message: 'Enter at least 3 characters' });
-    }
+    // if (query.length < 3) {
+    //   return res.status(400).json({ message: 'Enter at least 3 characters' });
+    // }
 
     const categories = await Category.find({
       name: { $regex: query, $options: 'i' }
