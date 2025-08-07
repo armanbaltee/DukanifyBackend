@@ -18,7 +18,7 @@ const socketUtil = require("./utils/socket.order");
 const storeOrdersRoutes = require("./routes/store-orders/storeOrders.routes");
 const unitsRoutes = require("./routes/script/scripts.routes");
 const app = express();
-const server = http.createServer(app); 
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:4200",
@@ -57,8 +57,8 @@ app.use(express.json());
 app.use(
   session({
     secret: "your-secret-key",
-  resave: false,
-  saveUninitialized: false,
+    resave: false,
+    saveUninitialized: false,
     cookie: { secure: false },
   })
 );
