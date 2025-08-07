@@ -9,7 +9,7 @@ exports.getVerifiedSellers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
-    const filter = { isStoreVerified: false };
+    const filter = { isStoreVerified: true };
 
     const total = await Store.countDocuments(filter);
 
