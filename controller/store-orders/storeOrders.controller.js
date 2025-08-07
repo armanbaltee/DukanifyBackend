@@ -35,10 +35,10 @@ exports.getAllOrdersByStore = async (req, res) => {
             buyerNotes,
             orderedAt,
             products: [{
-              name: product.name,
-              quantity: p.quantity,
-              price: p.totalPrice,
-              image: product.image
+              name: product?.name,
+              quantity: p?.quantity,
+              price: p?.totalPrice,
+              image: product?.image
             }]
           };
 
