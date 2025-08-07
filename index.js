@@ -4,7 +4,6 @@ const cors = require('cors');
 const dotenv = require('dotenv').config();
 const session = require('express-session');
 const http = require('http');
-const { Server } = require('socket.io');
 
 const authRoutes = require('./routes/auth/auth.routes');
 const adminRoutes = require('./routes/admin/admin.routes');
@@ -14,21 +13,17 @@ const productRoutes = require('./routes/product/product.routes');
 const profileRoutes = require('./routes/profile/profile.routes');
 const searchRoutes = require('./routes/search/search.routes');
 const checkoutRoutes = require('./routes/checkout/checkout.routes');
-const socketUtil = require('./utils/socket.order');
 const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes');
 const buyerOrderRoutes = require('./routes/buyer orders/buyer.order.routes');
-const unitsRoutes = require('./routes/script/scripts.routes')
+const unitsRoutes = require('./routes/script/scripts.routes');
+
+const socketUtil = require('./utils/socket.order');
+
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: ['http://localhost:4200', 'http://localhost:59257'],
-    methods: ['GET', 'POST', 'PUT'],
-    credentials: true
-  }
-});
-const allowedOrigins = ['http://localhost:4200', 'http://localhost:63137'];
+// CORS setup
+const allowedOrigins = ['http://localhost:4200', 'http://localhost:59257', 'http://localhost:63137'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -60,25 +55,9 @@ app.use('/checkout', checkoutRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/buyer', buyerOrderRoutes);
 app.use('/storeOrders', storeOrdersRoutes);
-app.use('/product/unit', unitsRoutes)
-socketUtil.initSocket(io);
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+app.use('/product/unit', unitsRoutes);
 
-  socket.on('joinStore', (storeId) => {
-    console.log(`Store joined room: ${storeId}`);
-    socket.join(storeId);
-  });
-
-  socket.on('joinBuyer', (userId) => {
-    console.log(`Buyer joined room: ${userId}`);
-    socket.join(userId);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
+const io = socketUtil.init(server); 
 
 const PORT = process.env.PORT || 3000;
 
