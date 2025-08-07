@@ -17,8 +17,8 @@ const getAllOrders = async (req, res) => {
           flattenedOrders.push({
             orderId: order._id,
             productId: product.productID?._id,
-            productName: product.productID.name,
-            image: product.productID.image,
+            productName: product.productID?.name,
+            image: product.productID?.image,
             quantity: product.quantity,
             totalPrice: product.totalPrice,
             storeId: orderDetail.storeID?._id,

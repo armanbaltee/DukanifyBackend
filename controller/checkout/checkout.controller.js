@@ -1,4 +1,5 @@
 const BuyerOrder = require('../../models/order/buyer order/buyer.order')
+const Product = require('../../models/product/product.model')
 
 
 exports.getAllOrders = async (req, res) => {
@@ -164,34 +165,49 @@ exports.updateOrder = async (req, res) => {
 
 exports.confirmCheckout = async (req, res) => {
   const userId = req.params.id;
-  const {phone, notes } = req.body
+  const { phone, notes } = req.body;
 
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
 
   try {
-    
-    const unconfirmedOrders = await BuyerOrder.find({ userID: userId, isOrderConfirmed: false });
+    const unconfirmedOrders = await BuyerOrder.find({
+      userID: userId,
+      isOrderConfirmed: false
+    });
 
     if (unconfirmedOrders.length === 0) {
       return res.status(404).json({ message: "No unconfirmed orders found for this user" });
     }
 
-    
+    for (const order of unconfirmedOrders) {
+      for (const detail of order.orderDetails) {
+        for (const product of detail.products) {
+          await Product.findByIdAndUpdate(
+            product.productID,
+            { $inc: { stock: -product.quantity } },
+            { new: true }
+          );
+        }
+      }
+    }
+
     const result = await BuyerOrder.updateMany(
       { userID: userId, isOrderConfirmed: false },
-      { $set: { isOrderConfirmed: true, buyerPhone : phone, buyerNotes : notes } }
+      { $set: { isOrderConfirmed: true, buyerPhone: phone, buyerNotes: notes } }
     );
 
     res.status(200).json({
-      message: "Checkout confirmed. Orders updated.",
+      message: "Checkout confirmed. Orders updated and stock reduced.",
       updatedCount: result.modifiedCount || result.nModified
     });
 
   } catch (error) {
     console.error("Error confirming checkout:", error);
-    res.status(500).json({ message: "Server error while confirming checkout", error: error.message });
+    res.status(500).json({
+      message: "Server error while confirming checkout",
+      error: error.message
+    });
   }
 };
-

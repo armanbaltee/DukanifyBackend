@@ -1,12 +1,21 @@
 const Product = require('../../models/product/product.model');
 
+
+const generateSKU = (length = 8) => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let sku = '';
+  for (let i = 0; i < length; i++) {
+    sku += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return sku;
+};
+
 const addProduct = async (req, res) => {
   try {
     const {
       name,
       category,
       brand,
-      sku,
       price,
       unit,
       stock,
@@ -16,10 +25,14 @@ const addProduct = async (req, res) => {
       storeId
     } = req.body;
 
-    // console.log("Store ID ->", storeId)
-    const existingProduct = await Product.findOne({ sku });
-    if (existingProduct) {
-      return res.status(400).json({ message: 'SKU already exists' });
+    let sku;
+    let skuExists = true;
+    while (skuExists) {
+      sku = generateSKU(8);
+      const existingProduct = await Product.findOne({ sku });
+      if (!existingProduct) {
+        skuExists = false;
+      }
     }
 
     const image = req.file ? req.file.path : '';
@@ -40,7 +53,7 @@ const addProduct = async (req, res) => {
     });
 
     await product.save();
-    res.status(201).json({ message: 'Product added', product });
+    res.status(201).json({ message: 'Product added with auto-generated SKU', product });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -49,7 +62,7 @@ const addProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate('category');
+    const products = await Product.find().populate('category').populate('unit');
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -64,7 +77,6 @@ const updateProduct = async (req, res) => {
       name,
       category,
       brand,
-      sku,
       price,
       unit,
       stock,
@@ -77,7 +89,6 @@ const updateProduct = async (req, res) => {
       name,
       category,
       brand,
-      sku,
       price,
       unit,
       stock,
@@ -119,7 +130,7 @@ const deleteProduct = async (req, res) => {
 const getProductById = async (req, res)=>{
   try {
     const id= req.params.id
-    const product = await Product.findById(id).populate('category');;
+    const product = await Product.findById(id).populate('category').populate('unit');;
     if(!id){
       return res.status(500).json({message: "No product Id"});
     }
@@ -135,7 +146,7 @@ const getLandingProducts = async (req, res) => {
       stock: { $gt: 5 }
     })
     .limit(10)
-    .populate('storeId', 'storeName isStoreVerified');
+    .populate('storeId', 'storeName isStoreVerified').populate('unit');
 
     res.status(200).json(products);
   } catch (error) {

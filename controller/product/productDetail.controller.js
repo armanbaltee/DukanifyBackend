@@ -3,7 +3,7 @@ const BuyerOrder = require("../../models/order/buyer order/buyer.order");
 const getProductDetailById = async (req, res) => {
   try {
     const productId = req.params.id;
-    const product = await Product.findById(productId).populate("category");
+    const product = await Product.findById(productId).populate("category").populate('unit');
     if (!product) {
       return res.status(500).json({ message: "No product Found" });
     }
@@ -11,7 +11,7 @@ const getProductDetailById = async (req, res) => {
       id: product._id,
       name: product.name,
       price: product.price,
-      unit: product.unit,
+      unit: product.unit.name,
       category: product.category.name,
       description: product.description,
       image: product.image,
