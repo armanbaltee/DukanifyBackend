@@ -72,17 +72,19 @@ exports.searchEcommerce = async (req, res) => {
 
 
 exports.createStore = async (req, res) => {
-    try {
-      const {
-        userId,
-        storeName,
-        storeAddress,
-        storePhone,
-        storeDescription,
-        openingTime,
-        closingTime,
-        storePaymentMethods,
-      } = req.body;
+  try {
+    const {
+      userId,
+      storeName,
+      storeAddress,
+      storePhone,
+      storeDescription,
+      openingTime,
+      closingTime,
+      storePaymentMethods,
+      latitude,
+      longitude
+    } = req.body;
 
 
       const exist = await Store.findById(userId)
@@ -90,24 +92,28 @@ exports.createStore = async (req, res) => {
       if(exist) return res.status(400).send({ message : 'User already have a Store!' })
       
 
-      const newStore = new Store({
-        userId,
-        storeName,
-        storeAddress,
-        storePhone,
-        storeDescription,
-        storeTiming: {
-          openingTime,
-          closingTime,
-        },
-        storePaymentMethods: JSON.parse(storePaymentMethods),
+    const newStore = new Store({
+      userId,
+      storeName,
+      storeAddress,
+      storePhone,
+      storeDescription,
+      storeTiming: {
+        openingTime,
+        closingTime,
+      },
+      storePaymentMethods: JSON.parse(storePaymentMethods),
+      location: {
+        type: 'Point',
+        coordinates: [parseFloat(longitude), parseFloat(latitude)] // [lng, lat]
+      },
 
-        storeLogo: req.files['storeLogo']?.[0]?.path || '',
-        storeBanner: req.files['storeBanner']?.map(file => file.path) || [],
-        storePictures: req.files['storePictures']?.map(file => file.path) || [],
-      });
+      storeLogo: req.files['storeLogo']?.[0]?.path || '',
+      storeBanner: req.files['storeBanner']?.map(file => file.path) || [],
+      storePictures: req.files['storePictures']?.map(file => file.path) || [],
+    });
 
-      console.log('new store=====', newStore)
+    console.log('new store=====', newStore)
 
     await newStore.save();
     res.status(201).json({ message: 'Store created', store: newStore });
@@ -118,56 +124,56 @@ exports.createStore = async (req, res) => {
 }
 
 
-  exports.getStore = async (req, res) => {
-    const userId = req.params.id
-    console.log('userid==========', userId)
-    try{
-      const stores = await Store.find({ userId })
+exports.getStore = async (req, res) => {
+  const userId = req.params.id
+  console.log('userid==========', userId)
+  try {
+    const stores = await Store.find({ userId })
 
-      if(!stores){
-        return res.status(400).send({ message : 'Store Not Found!' })
-      }
-
-      res.status(200).send(stores)
-    }catch(error){
-      console.log('Error in finding store', error)
-      res.status(400).send({ message : 'Store finding Error!!' })
+    if (!stores) {
+      return res.status(400).send({ message: 'Store Not Found!' })
     }
+
+    res.status(200).send(stores)
+  } catch (error) {
+    console.log('Error in finding store', error)
+    res.status(400).send({ message: 'Store finding Error!!' })
   }
+}
 
-  exports.getStoreById = async (req, res) => {
-    const userId = req.params.id
+exports.getStoreById = async (req, res) => {
+  const userId = req.params.id
 
-    console.log('storeid===========', userId)
+  console.log('storeid===========', userId)
 
-    try{
-      const store = await Store.findOne({ userId })
+  try {
+    const store = await Store.findOne({ userId })
 
-      if(!store){
-        return res.status(400).send({ message : 'Store not found' })
-      }
-      
-      res.status(200).send(store)
-
-    }catch(error){
-      console.log('Error in finding store', error)
-      res.status(400).send({ message : 'Store finding Error!!' })
+    if (!store) {
+      return res.status(400).send({ message: 'Store not found' })
     }
+
+    res.status(200).send(store)
+
+  } catch (error) {
+    console.log('Error in finding store', error)
+    res.status(400).send({ message: 'Store finding Error!!' })
   }
+}
 
 
 
-  exports.getAllStoreNames = async (req, res) => {
-    try{
-      const storeNames = await Store.find().select('storeName userId')
+exports.getAllStoreNames = async (req, res) => {
+  try {
+    const storeNames = await Store.find().select('storeName userId')
 
-      if(!storeNames) return res.status(400).send({ message : 'No store found!' })
+    if (!storeNames) return res.status(400).send({ message: 'No store found!' })
 
-      res.status(200).send(storeNames)
-      
-    }catch(error){
-      console.log('Error in finding Store Names')
-      res.status(400).send({ message : 'Error in finding StoreNames' })
+    res.status(200).send(storeNames)
+
+  } catch (error) {
+    console.log('Error in finding Store Names')
+    res.status(400).send({ message: 'Error in finding StoreNames' })
   }
   }
 
