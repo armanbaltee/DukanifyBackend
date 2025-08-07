@@ -28,7 +28,7 @@ const io = new Server(server, {
     credentials: true
   }
 });
-const allowedOrigins = ['http://localhost:4200', 'http://localhost:59257'];
+const allowedOrigins = ['http://localhost:4200', 'http://localhost:63137'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
