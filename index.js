@@ -21,9 +21,20 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:4200",
-    methods: ["GET", "POST", "PUT"],
-    credentials: true,
+    origin: ['http://localhost:4200', 'http://localhost:59257'],
+    methods: ['GET', 'POST', 'PUT'],
+    credentials: true
+  }
+});
+const allowedOrigins = ['http://localhost:4200', 'http://localhost:63137'];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
   },
 });
 
