@@ -85,7 +85,7 @@ exports.createStore = async (req, res) => {
       } = req.body;
 
 
-      const exist = await Store.findById(userId)
+      const exist = await Store.find({userId : userId})
 
       if(exist) return res.status(400).send({ message : 'User already have a Store!' })
       
