@@ -9,7 +9,7 @@ exports.getVerifiedSellers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
-    const filter = { isStoreVerified: true };
+    const filter = { isStoreVerified: false };
 
     const total = await Store.countDocuments(filter);
 
@@ -85,7 +85,9 @@ exports.createStore = async (req, res) => {
       } = req.body;
 
 
+      const exist = await Store.findById(userId)
 
+      if(exist) return res.status(400).send({ message : 'User already have a Store!' })
       
 
       const newStore = new Store({
