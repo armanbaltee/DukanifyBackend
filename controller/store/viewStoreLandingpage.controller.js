@@ -38,6 +38,7 @@ const getTopStore = async (req, res) => {
       }
 
       storeMap.get(storeId).products.push({
+        id : product._id,
         productImage: product.image,
         productTitle: product.name,
         productPrice: product.price

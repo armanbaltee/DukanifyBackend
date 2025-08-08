@@ -1,4 +1,5 @@
 const User = require('../../models/auth/user.model');
+const Store = require('../../models/store.model')
 
 // GET USER BY ID
 exports.getUserById = async (req, res) => {
@@ -6,13 +7,16 @@ exports.getUserById = async (req, res) => {
     const userId = req.params.id;
 
     const user = await User.findById(userId).select('name email photo role');
-    console.log("user========>", user)
+    const storeStatus = await Store.findOne({ userId : userId }).select('isStoreVerified')
+    console.log("user========>", user, storeStatus)
+
+    
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json(user);
+    res.status(200).send([user, storeStatus]);
   } catch (error) {
     console.error('Error fetching user by ID:', error);
     res.status(500).json({ message: 'Server error' });

@@ -32,7 +32,7 @@ const storeSchema = new mongoose.Schema({
 
   storePaymentMethods: [{
     type: String,
-    enum: ['cash', 'jazzcash', 'easypaisa', 'card'],
+    enum: ['Cash', 'Jazzcash', 'Easypaisa', 'Card'],
     required: true
   }],
 
