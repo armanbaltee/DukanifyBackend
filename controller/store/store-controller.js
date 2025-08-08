@@ -197,7 +197,7 @@ exports.getStoreWithProducts = async (req, res) => {
       storeId: storeId,
       isActive: true,
       stock: { $gt: 0 },
-    });
+    }).populate('category').populate('unit')
 
     res.json({ store, products });
   } catch (err) {
