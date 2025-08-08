@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const storeController = require("../../controller/store/store-controller");
 const upload = require("../../middleware/uploads");
+const landingPageStore = require('../../controller/store/viewStoreLandingpage.controller')
 
 // Route for store search
 router.get("/search", storeController.searchEcommerce);
@@ -26,5 +27,7 @@ router.get("/getAllStoreNames", storeController.getAllStoreNames);
 router.get("/getStoreWithProducts/:id", storeController.getStoreWithProducts);
 
 router.get('/checkaccess/:id', storeController.accessSellerDashboard)
+
+router.get('/getstoreprosuct', landingPageStore.getTopStore)
 
 module.exports = router;
