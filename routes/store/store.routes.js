@@ -28,6 +28,6 @@ router.get("/getStoreWithProducts/:id", storeController.getStoreWithProducts);
 
 router.get('/checkaccess/:id', storeController.accessSellerDashboard)
 
-router.get('/getstoreprosuct', landingPageStore.getTopStore)
+router.get('/getstoreprosuct/:id', landingPageStore.getTopStore)
 
 module.exports = router;

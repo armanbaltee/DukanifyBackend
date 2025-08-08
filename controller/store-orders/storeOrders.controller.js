@@ -72,27 +72,22 @@ exports.getAllOrdersByStore = async (req, res) => {
 
 
 exports.changeOrderStatus = async (req, res) => {
-    const { orderId, status } = req.body
+  const { orderId, status } = req.body;
 
-    console.log('chnage stsua========', req.body)
+  try {
+    const exist = await BuyerOrder.find({ _id: orderId });
 
-    try{
-        const exist = await BuyerOrder.find({ _id : orderId })
+    if (exist.length === 0) return res.status(400).send({ message: 'No order found' });
 
-        if(exist.length === 0) return res.status(400).send({ message : 'No order found' })
+    await BuyerOrder.updateMany(
+      { _id: orderId, isOrderConfirmed: true },
+      { $set: { orderStatus: status } }
+    );
 
-        const updatedorderstatus = await BuyerOrder.updateMany(
-            { _id : orderId, isOrderConfirmed: true },
-            { $set: { orderStatus: status } }
-        )
+    global.io.emit('orderStatusUpdated', { orderId, status });
 
-        console.log('updated status=====', updatedorderstatus)
-
-        res.status(200).send({ message : 'Status Updated Successfully' })
-        
-    }
-    catch(error){
-        console.log('Error in updating order status', error)
-        res.status(400).send({ message : 'Error in updating order status' })
-    }
-}
+    res.status(200).send({ message: 'Status Updated Successfully' });
+  } catch (error) {
+    res.status(400).send({ message: 'Error in updating order status' });
+  }
+};
