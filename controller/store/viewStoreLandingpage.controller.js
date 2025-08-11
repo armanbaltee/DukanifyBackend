@@ -5,12 +5,11 @@ const getTopStore = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    // Find all products and populate store info,
-    // but skip stores that belong to the same user
+
     const products = await Product.find()
       .populate({
         path: "storeId",
-        match: { userId: { $ne: userId } } // ✅ Skip stores owned by this user
+        match: { userId: { $ne: userId } }
       });
 
     const storeMap = new Map();
@@ -18,12 +17,10 @@ const getTopStore = async (req, res) => {
     for (const product of products) {
       const store = product.storeId;
 
-      // Skip if store was filtered out or missing
       if (!store || !store._id) continue;
 
       const storeId = store._id.toString();
 
-      // If store is not in map, initialize it
       if (!storeMap.has(storeId)) {
         const addressParts = store.storeAddress?.split(",").map(p => p.trim());
         const countryOrCity = addressParts?.[addressParts.length - 1] || "Unknown";
@@ -32,7 +29,7 @@ const getTopStore = async (req, res) => {
           storeId: storeId,
           storeLogo: store.storeLogo,
           storeName: store.storeName,
-          category: "Bath Oils, health & beauty, perfume bottles", // Static category?
+          category: "Bath Oils, health & beauty, perfume bottles",
           description: store.storeDescription,
           tags: [
             countryOrCity,
@@ -44,7 +41,6 @@ const getTopStore = async (req, res) => {
         });
       }
 
-      // Add product to store
       storeMap.get(storeId).products.push({
         id : product._id,
         productImage: product.image,
@@ -53,13 +49,11 @@ const getTopStore = async (req, res) => {
       });
     }
 
-    // Update product count tag
     for (const store of storeMap.values()) {
       const count = store.products.length;
       store.tags[2] = `${count}+ Product${count > 1 ? "s" : ""}`;
     }
 
-    // Convert map to array and get top 3
     const topStores = Array.from(storeMap.values()).slice(0, 3);
 
     if (topStores.length === 0) {
