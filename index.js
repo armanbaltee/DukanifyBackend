@@ -1,3 +1,4 @@
+// index.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -16,14 +17,22 @@ const checkoutRoutes = require('./routes/checkout/checkout.routes');
 const storeOrdersRoutes = require('./routes/store-orders/storeOrders.routes');
 const buyerOrderRoutes = require('./routes/buyer orders/buyer.order.routes');
 const unitsRoutes = require('./routes/script/scripts.routes');
+const chatRoutes = require('./routes/chat/chat.routes')
 
-const socketUtil = require('./utils/socket.order');
+const socketUtil = require('./utils/socket.order'); // ORDER socket util
+const chatSockets = require('./sockets/chat.socket'); // CHAT socket handler
 
 const app = express();
 const server = http.createServer(app);
 
+// --------------------
 // CORS setup
-const allowedOrigins = ['http://localhost:4200', 'http://localhost:59257', 'http://localhost:63137'];
+// --------------------
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:59257',
+  'http://localhost:63137'
+];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -36,6 +45,9 @@ app.use(cors({
   credentials: true
 }));
 
+// --------------------
+// Middlewares
+// --------------------
 app.use(express.json());
 app.use(session({
   secret: 'your-secret-key',
@@ -44,6 +56,9 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+// --------------------
+// API Routes
+// --------------------
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/store', storeRoutes);
@@ -57,8 +72,26 @@ app.use('/buyer', buyerOrderRoutes);
 app.use('/storeOrders', storeOrdersRoutes);
 app.use('/product/unit', unitsRoutes);
 
-const io = socketUtil.init(server); 
+// --------------------
+// Socket.IO Setup
+// --------------------
+const io = socketUtil.init(server);
+const chatIO = io.of('/chat');
 
+app.use((req, res, next) => {
+  req.io = io;         // root io
+  req.chatIO = chatIO; // chat namespace io
+  next();
+});
+
+chatSockets(chatIO);
+
+app.use('/api/chat', chatRoutes);
+
+
+// --------------------
+// MongoDB + Server start
+// --------------------
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect('mongodb://localhost:27017/Dukanify', {
