@@ -143,7 +143,6 @@ const getLandingProducts = async (req, res) => {
   try {
     const products = await Product.find({
       isActive: true,
-      stock: { $gt: 5 }
     })
     .limit(10)
     .populate('storeId', 'storeName isStoreVerified').populate('unit');
