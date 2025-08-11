@@ -26,7 +26,7 @@ exports.verifyOTP = async (req, res, next) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role }, 
       process.env.SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: '2h' }
     );
 
     res.json({ message: 'Account verified successfully',token });
