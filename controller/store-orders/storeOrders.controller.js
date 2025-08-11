@@ -1,4 +1,5 @@
 const BuyerOrder = require('../../models/order/buyer order/buyer.order')
+const socketUtil = require('../../utils/socket.order');
 
 exports.getAllOrdersByStore = async (req, res) => {
   const storeId = req.params.id;
@@ -72,22 +73,38 @@ exports.getAllOrdersByStore = async (req, res) => {
 
 
 exports.changeOrderStatus = async (req, res) => {
-  const { orderId, status } = req.body;
-
   try {
-    const exist = await BuyerOrder.find({ _id: orderId });
+    const { orderId, status } = req.body;
 
-    if (exist.length === 0) return res.status(400).send({ message: 'No order found' });
+    const statusMap = {
+      Accept: 'inProgress',
+      Reject: 'declined',
+      Packed: 'ready',
+      Fullfilled: 'fulfilled'
+    };
+    // const finalStatus = statusMap[status] || status;
 
-    await BuyerOrder.updateMany(
-      { _id: orderId, isOrderConfirmed: true },
-      { $set: { orderStatus: status } }
-    );
+    const order = await BuyerOrder.findByIdAndUpdate(
+      orderId,
+      { orderStatus: status },
+      { new: true }
+    ).populate('userID', '_id name');
 
-    global.io.emit('orderStatusUpdated', { orderId, status });
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
 
-    res.status(200).send({ message: 'Status Updated Successfully' });
-  } catch (error) {
-    res.status(400).send({ message: 'Error in updating order status' });
+    // Notify store & buyer
+    socketUtil.emitToUser(order.userID._id.toString(), 'orderStatusUpdated', {
+      orderId: order._id,
+      status: status,
+      buyerName: order.userID.name,
+      updatedAt: new Date()
+    });
+
+    res.json({ message: 'Order status updated', order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
