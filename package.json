@@ -16,7 +16,6 @@
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "cron": "^4.3.2",
-    "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "fs": "^0.0.1-security",
@@ -32,6 +31,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "stripe": "^18.4.0"
   }
 }
