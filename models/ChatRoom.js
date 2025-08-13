@@ -13,3 +13,4 @@ const chatRoomSchema = new mongoose.Schema({
 chatRoomSchema.index({ buyerId: 1, storeId: 1 }, { unique: true });
 
 module.exports = mongoose.model('ChatRoom', chatRoomSchema);
+
